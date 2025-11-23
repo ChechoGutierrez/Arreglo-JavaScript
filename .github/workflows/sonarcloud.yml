@@ -36,3 +36,4 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=ChechoGutierrez_Arreglo-JavaScript
+            -Dsonar.organization=chechogutierrez
