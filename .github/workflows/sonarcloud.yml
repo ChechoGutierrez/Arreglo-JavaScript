@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -22,7 +23,11 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: true
 
       - name: Build project
         run: npm run build
@@ -37,3 +42,10 @@ jobs:
           args: >
             -Dsonar.projectKey=ChechoGutierrez_Arreglo-JavaScript
             -Dsonar.organization=ChechoGutierrez
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.sources=.
+            -Dsonar.tests=src
+            -Dsonar.language=js
+            -Dsonar.verbose=true
+            -X
