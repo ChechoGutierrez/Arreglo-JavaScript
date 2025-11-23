@@ -46,7 +46,7 @@ jobs:
           fi
 
       - name: Run tests
-        run: npm test
+        run: npm run test --if-present
         continue-on-error: true
 
       - name: Build project
