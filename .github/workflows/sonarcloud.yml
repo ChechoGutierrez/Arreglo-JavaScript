@@ -12,8 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -22,53 +21,19 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Cache npm
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Show Node/NPM version
-        run: |
-          node -v
-          npm -v
-
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
-            echo "Found lockfile -> using npm ci"
-            npm ci
-          else
-            echo "No lockfile -> using npm install"
-            npm install
-          fi
-
-      - name: Run tests
-        run: npm run test --if-present
-        continue-on-error: true
+        run: npm install
 
       - name: Build project
         run: npm run build
         continue-on-error: true
 
-      - name: Set up Java 17
-        id: setup-java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
-        run: |
-          mkdir -p .scannerwork
-          curl -sSL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip -o sonar-scanner.zip
-          unzip -q sonar-scanner.zip
-          export PATH=$PATH:$PWD/sonar-scanner-5.0.1.3006-linux/bin
-          ${{ steps.setup-java.outputs.java-home }}/bin/java -version
-          sonar-scanner -Dsonar.projectKey=ChechoGutierrez_Arreglo-JavaScript -Dsonar.organization=ChechoGutierrez -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.sources=src -Dsonar.verbose=true
+        with:
+          args: >
+            -Dsonar.projectKey=ChechoGutierrez_Arreglo-JavaScript
+            -Dsonar.organization=ChechoGutierrez
