@@ -59,7 +59,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'maven'
+          cache: 'none'
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
