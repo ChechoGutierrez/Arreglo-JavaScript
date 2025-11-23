@@ -61,19 +61,14 @@ jobs:
           java-version: '17'
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           JAVA_HOME: ${{ steps.setup-java.outputs.java-home }}
-        with:
-          args: >
-            -Dsonar.projectKey=ChechoGutierrez_Arreglo-JavaScript
-            -Dsonar.organization=ChechoGutierrez
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.sources=.
-            -Dsonar.tests=src
-            -Dsonar.language=js
-            -Dsonar.verbose=true
-            -X
+        run: |
+          mkdir -p .scannerwork
+          curl -sSL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip -o sonar-scanner.zip
+          unzip -q sonar-scanner.zip
+          export PATH=$PATH:$PWD/sonar-scanner-5.0.1.3006-linux/bin
+          ${{ steps.setup-java.outputs.java-home }}/bin/java -version
+          sonar-scanner -Dsonar.projectKey=ChechoGutierrez_Arreglo-JavaScript -Dsonar.organization=ChechoGutierrez -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.sources=src -Dsonar.verbose=true
